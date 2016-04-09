@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 
 
@@ -13,9 +14,11 @@ public class MDS {
     int insert(long id, double price, long[] description, int size) {
     	if(data.idMap.containsKey(id)){
     		Record r = data.idMap.get(id);
+    		removeFromOldReferenceLists(r);
     		r.price = price;
     		if(size != 0){
 //    			r.updateDescription(description, size);
+    			
     			r.description = description;
     			r.size = size;
     		}
@@ -34,7 +37,7 @@ public class MDS {
     	}
     }
 
-    double find(long id) {
+	double find(long id) {
     	Record r = data.idMap.get(id);
     	if(r!=null)
     		return r.price;
@@ -77,4 +80,9 @@ public class MDS {
     int samesame() {
 	return 0;
     }
+    
+    private void removeFromOldReferenceLists(Record r) {
+		LinkedList<LinkedList<Record>> references = r.referenceList;
+		
+	}
 }
