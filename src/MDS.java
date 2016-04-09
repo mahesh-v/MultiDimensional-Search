@@ -53,11 +53,13 @@ public class MDS {
     }
 
 	double findMinPrice(long des) {
-	return 0;
+		TreeMap<Double, LinkedList<Record>> priceRecordMap = data.descripMap.get(des);
+		return priceRecordMap.firstKey();
     }
 
     double findMaxPrice(long des) {
-	return 0;
+		TreeMap<Double, LinkedList<Record>> priceRecordMap = data.descripMap.get(des);
+		return priceRecordMap.lastKey();
     }
 
     int findPriceRange(long des, double lowPrice, double highPrice) {
