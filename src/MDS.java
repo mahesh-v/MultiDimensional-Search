@@ -44,12 +44,14 @@ public class MDS {
     long delete(long id) {
     	Record r = data.idMap.get(id);
     	if(r!=null){
-    		
+    		removeFromOldReferenceLists(r);
+    		data.idMap.remove(id);
+    		return sumOfDescription(r.description);
     	}
     	return 0;
     }
 
-    double findMinPrice(long des) {
+	double findMinPrice(long des) {
 	return 0;
     }
 
@@ -99,5 +101,13 @@ public class MDS {
 	private void addToPriceMap(Record r) {
 		// TODO Auto-generated method stub
 		
+	}
+
+    private long sumOfDescription(long[] description) {
+		long sum=0;
+		for (long l : description) {
+			sum+=l;
+		}
+		return sum;
 	}
 }
