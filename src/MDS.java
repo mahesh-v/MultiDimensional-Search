@@ -15,15 +15,19 @@ public class MDS {
     		Record r = data.idMap.get(id);
     		removeFromOldReferenceLists(r);
     		r.price = price;
+    		addToPriceMap(r);
     		if(size != 0){
     			r.description = description;
     			r.size = size;
+    			addToDescriptionMap(r);
     		}
     		return 0;
     	}
     	else{
     		Record r = new Record(id, price, description, size);
     		data.idMap.put(id, r);
+    		addToPriceMap(r);
+    		addToDescriptionMap(r);
     		return 1;
     	}
     }
@@ -69,6 +73,16 @@ public class MDS {
     
     private void removeFromOldReferenceLists(Record r) {
 		LinkedList<LinkedList<Record>> references = r.referenceList;
+		
+	}
+
+	private void addToDescriptionMap(Record r) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void addToPriceMap(Record r) {
+		// TODO Auto-generated method stub
 		
 	}
 }
