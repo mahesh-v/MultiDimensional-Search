@@ -1,9 +1,13 @@
+import java.util.ArrayList;
+
 
 public class Record {
 	long id;
 	double price;
 	long[] description;
 	int size;
+	ArrayList<Record> descMapList;
+	ArrayList<Record> priceMapList;
 	
 	public Record(long id, double price, long[] description, int size) {
 		this.id = id;
