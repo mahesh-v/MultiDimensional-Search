@@ -1,6 +1,7 @@
 
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.NavigableMap;
 import java.util.TreeMap;
 
 
@@ -8,6 +9,7 @@ import java.util.TreeMap;
 public class MDS {
 	
 	MyData data;
+	private static final double epsilon = 0.000001;
 	
 	public MDS() {
 		data = new MyData();
@@ -61,11 +63,24 @@ public class MDS {
     }
 
     int findPriceRange(long des, double lowPrice, double highPrice) {
-	return 0;
+    	NavigableMap<Double, LinkedList<Record>> map = data.descripMap.get(des).subMap(lowPrice, true, highPrice, true);
+    	int count = 0;
+    	for (LinkedList<Record> list : map.values()) {
+			count+=list.size();
+		}
+    	return count;
     }
 
     double priceHike(long minid, long maxid, double rate) {
-	return 0;
+    	double sum = 0;
+    	NavigableMap<Long, Record> map = data.idMap.subMap(minid, true, maxid, true);
+    	for (Record r : map.values()) {
+			double value = r.price + (r.price * (rate/100));
+			value = Math.floor((value+epsilon) * 100) / 100;
+			sum+= (value - r.price);
+			r.price = value;
+		}
+    	return sum;
     }
 
     int range(double lowPrice, double highPrice) {
