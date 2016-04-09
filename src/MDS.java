@@ -1,4 +1,5 @@
 import java.util.LinkedList;
+import java.util.TreeMap;
 
 
 
@@ -77,8 +78,9 @@ public class MDS {
 	}
 
 	private void addToDescriptionMap(Record r) {
-		// TODO Auto-generated method stub
-		
+		for (long l : r.description) {
+			TreeMap<Double, LinkedList<Record>> pMap = data.descripMap.get(l);
+		}
 	}
 
 	private void addToPriceMap(Record r) {
