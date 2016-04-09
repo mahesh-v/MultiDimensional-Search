@@ -1,3 +1,4 @@
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.TreeMap;
 
@@ -74,12 +75,24 @@ public class MDS {
     
     private void removeFromOldReferenceLists(Record r) {
 		LinkedList<LinkedList<Record>> references = r.referenceList;
-		
+		Iterator<LinkedList<Record>> outer_iter = references.iterator();
+		while(outer_iter.hasNext()){
+			LinkedList<Record> reference = outer_iter.next();
+			if(reference!=null)
+				reference.remove(r);
+			outer_iter.remove();
+		}
 	}
 
 	private void addToDescriptionMap(Record r) {
 		for (long l : r.description) {
 			TreeMap<Double, LinkedList<Record>> pMap = data.descripMap.get(l);
+			LinkedList<Record> list = pMap.get(r.price);
+			if(list == null)
+				list = new LinkedList<Record>();
+			list.add(r);
+			pMap.put(r.price, list);
+			r.referenceList.add(list);
 		}
 	}
 
