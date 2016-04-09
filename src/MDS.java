@@ -108,6 +108,10 @@ public class MDS {
 	private void addToDescriptionMap(Record r) {
 		for (long l : r.description) {
 			TreeMap<Double, LinkedList<Record>> pMap = data.descripMap.get(l);
+			if(pMap == null){
+				pMap = new TreeMap<Double, LinkedList<Record>>();
+				data.descripMap.put(l, pMap);
+			}
 			LinkedList<Record> list = pMap.get(r.price);
 			if(list == null)
 				list = new LinkedList<Record>();
@@ -119,6 +123,8 @@ public class MDS {
 
 	private void addToPriceMap(Record r) {
 		LinkedList<Record> priceList = data.priceMap.get(r.price);
+		if(priceList == null)
+			priceList = new LinkedList<Record>();
 		priceList.addFirst(r);
 		r.referenceList.add(priceList);
 	}
