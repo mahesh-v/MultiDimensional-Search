@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 import java.util.LinkedList;
 
 
@@ -17,8 +16,6 @@ public class MDS {
     		removeFromOldReferenceLists(r);
     		r.price = price;
     		if(size != 0){
-//    			r.updateDescription(description, size);
-    			
     			r.description = description;
     			r.size = size;
     		}
@@ -27,12 +24,6 @@ public class MDS {
     	else{
     		Record r = new Record(id, price, description, size);
     		data.idMap.put(id, r);
-    		ArrayList<Record> price_list = data.priceMap.get(price);
-    		if(price_list == null){
-    			price_list = new ArrayList<Record>();
-    			data.priceMap.put(price, price_list);
-    		}
-    		price_list.add(r);
     		return 1;
     	}
     }
@@ -47,11 +38,6 @@ public class MDS {
     long delete(long id) {
     	Record r = data.idMap.get(id);
     	if(r!=null){
-    		data.idMap.remove(id);
-    		ArrayList<Record> price_list = data.priceMap.get(r.price);
-    		price_list.remove(r);
-    		if(price_list.size() == 0)
-    			data.priceMap.remove(r.price);
     		
     	}
     	return 0;
