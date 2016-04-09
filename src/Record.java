@@ -6,14 +6,14 @@ public class Record {
 	double price;
 	long[] description;
 	int size;
-	ArrayList<Record> descMapList;
-	ArrayList<Record> priceMapList;
+	ArrayList<ArrayList<Record>> referenceList;
 	
 	public Record(long id, double price, long[] description, int size) {
 		this.id = id;
 		this.price = price;
 		this.description = description;
 		this.size = size;
+		referenceList = new ArrayList<ArrayList<Record>>();
 	}
 //
 //	public void convertDesc(long[] description, int size) {
