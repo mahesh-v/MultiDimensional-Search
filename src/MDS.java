@@ -1,3 +1,4 @@
+import java.lang.ref.Reference;
 import java.util.LinkedList;
 import java.util.TreeMap;
 
@@ -84,7 +85,8 @@ public class MDS {
 	}
 
 	private void addToPriceMap(Record r) {
-		// TODO Auto-generated method stub
-		
+		LinkedList<Record> priceList = data.priceMap.get(r.price);
+		priceList.addFirst(r);
+		r.referenceList.add(priceList);
 	}
 }
