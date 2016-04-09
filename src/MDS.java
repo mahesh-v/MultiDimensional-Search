@@ -71,7 +71,8 @@ public class MDS {
     }
 
     int range(double lowPrice, double highPrice) {
-	return 0;
+		TreeMap<Double, LinkedList<Record>> priceList = data.priceMap;
+		return priceList.subMap(lowPrice,true,highPrice,true).size();
     }
 
     int samesame() {
