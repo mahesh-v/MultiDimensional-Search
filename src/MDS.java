@@ -16,13 +16,11 @@ public class MDS {
     		Record r = data.idMap.get(id);
     		r.price = price;
     		if(size != 0){
-    			if(r.size>7)
-    				removeFromSSMap(r);
+    			removeFromSSMap(r);
     			removeFromDescriptionMap(r);
     			r.updateDescription(description, size);
     			addToDescriptionMap(r);
-    			if(size>7)
-    				addToSSMap(r);
+    			addToSSMap(r);
     		}
     		return 0;
     	}
@@ -30,6 +28,7 @@ public class MDS {
     		Record r = new Record(id, price, description, size);
     		data.idMap.put(id, r);
     		addToDescriptionMap(r);
+    		addToSSMap(r);
     		return 1;
     	}
     }
@@ -46,8 +45,7 @@ public class MDS {
     	if(r!=null){
     		removeFromDescriptionMap(r);
     		data.idMap.remove(id);
-    		if(r.size>7)
-    			removeFromSSMap(r);
+    		removeFromSSMap(r);
     		return r.sum;
     	}
     	return 0;
@@ -140,6 +138,8 @@ public class MDS {
 	}
 
 	private void addToSSMap(Record r) {
+		if(r.size<8)
+			return;
 		LinkedList<Record> list = data.ssMap.get(r.sum);
 		if(list==null){
 			list = new LinkedList<>();
@@ -149,6 +149,8 @@ public class MDS {
 	}
 
 	private void removeFromSSMap(Record r) {
+		if(r.size<8)
+			return;
 		LinkedList<Record> list = data.ssMap.get(r.sum);
 		list.remove(r);
 		if(list.size() == 0)
@@ -175,8 +177,6 @@ public class MDS {
 				flag=true;
 			}
 		}
-//		if(count>0)
-//			return count+1;
 		return count;
 	}
 
