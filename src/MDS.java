@@ -17,14 +17,13 @@ public class MDS {
     int insert(long id, double price, long[] description, int size) {
     	if(data.idMap.containsKey(id)){
     		Record r = data.idMap.get(id);
-    		removeFromPriceMap(r);
+    		removeFromOldReferenceLists(r);
     		r.price = price;
     		addToPriceMap(r);
     		if(size != 0){
-    			removeFromDescriptionMap(r);
     			r.updateDescription(description, size);
-    			addToDescriptionMap(r);
     		}
+    		addToDescriptionMap(r);
     		return 0;
     	}
     	else{
