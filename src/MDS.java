@@ -98,14 +98,29 @@ public class MDS {
     }
     
     private void removeFromOldReferenceLists(Record r) {
-		LinkedList<LinkedList<Record>> references = r.referenceList;
-		Iterator<LinkedList<Record>> outer_iter = references.iterator();
-		while(outer_iter.hasNext()){
-			LinkedList<Record> reference = outer_iter.next();
-			if(reference!=null)
-				reference.remove(r);
-			outer_iter.remove();
+    	LinkedList<Record> priceMapList = data.priceMap.get(r.price);
+    	priceMapList.remove(r);
+    	if(priceMapList.size() == 0)
+    		data.priceMap.remove(r.price);
+    	for (int i = 0; i<r.size;i++) {
+    		TreeMap<Double, LinkedList<Record>> descPriceMap = data.descripMap.get( r.description[i]);
+    		LinkedList<Record> list = descPriceMap.get(r.price);
+    		if(list== null)
+    			continue;
+    		list.remove(r);
+    		if(list.size() == 0)
+    			descPriceMap.remove(r.price);
+    		if(descPriceMap.entrySet().size() == 0)
+    			data.descripMap.remove(r.description[i]);
 		}
+//		LinkedList<LinkedList<Record>> references = r.referenceList;
+//		Iterator<LinkedList<Record>> outer_iter = references.iterator();
+//		while(outer_iter.hasNext()){
+//			LinkedList<Record> reference = outer_iter.next();
+//			if(reference!=null)
+//				reference.remove(r);
+//			outer_iter.remove();
+//		}
 	}
 
 	private void addToDescriptionMap(Record r) {
