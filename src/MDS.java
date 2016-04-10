@@ -22,8 +22,7 @@ public class MDS {
     		r.price = price;
     		addToPriceMap(r);
     		if(size != 0){
-    			r.description = description;
-    			r.size = size;
+    			r.updateDescription(description, size);
     			addToDescriptionMap(r);
     		}
     		return 0;
