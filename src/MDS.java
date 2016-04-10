@@ -1,9 +1,5 @@
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.NavigableMap;
-
+import java.util.*;
 
 
 public class MDS {
@@ -20,13 +16,13 @@ public class MDS {
     		Record r = data.idMap.get(id);
     		r.price = price;
     		if(size != 0){
-//    			if(r.size>7)
-//    				removeFromSSMap(r);
+    			if(r.size>7)
+    				removeFromSSMap(r);
     			removeFromDescriptionMap(r);
     			r.updateDescription(description, size);
     			addToDescriptionMap(r);
-//    			if(size>7)
-//    				addToSSMap(r);
+    			if(size>7)
+    				addToSSMap(r);
     		}
     		return 0;
     	}
@@ -50,15 +46,15 @@ public class MDS {
     	if(r!=null){
     		removeFromDescriptionMap(r);
     		data.idMap.remove(id);
-//    		if(r.size>7)
-//    			removeFromSSMap(r);
+    		if(r.size>7)
+    			removeFromSSMap(r);
     		return r.sum;
     	}
     	return 0;
     }
 
 	double findMinPrice(long des) {
-		ArrayList<Record> descList = data.descripMap.get(des);
+		LinkedList<Record> descList = data.descripMap.get(des);
 		if(descList == null || descList.size() == 0 )
 			return 0;
 		double minPrice=descList.get(0).price;
@@ -70,7 +66,7 @@ public class MDS {
     }
 
     double findMaxPrice(long des) {
-    	ArrayList<Record> descList = data.descripMap.get(des);
+    	LinkedList<Record> descList = data.descripMap.get(des);
 		if(descList == null || descList.size() == 0 )
 			return 0;
 		double maxPrice=descList.get(0).price;
@@ -82,7 +78,7 @@ public class MDS {
     }
 
     int findPriceRange(long des, double lowPrice, double highPrice) {
-    	ArrayList<Record> descList = data.descripMap.get(des);
+    	LinkedList<Record> descList = data.descripMap.get(des);
     	int count = 0;
     	for (Record record : descList) {
 			if(record.price<=highPrice && record.price>=lowPrice)
@@ -114,7 +110,7 @@ public class MDS {
 
     int samesame() {
     	int count = 0;
-    	for (ArrayList<Record> list : data.ssMap.values()) {
+    	for (LinkedList<Record> list : data.ssMap.values()) {
 			if(list.size()>1){
 				count+=getSameSameCount(list);
 			}
@@ -124,7 +120,7 @@ public class MDS {
 
 	private void removeFromDescriptionMap(Record r) {
 		for (int i = 0; i<r.size;i++) {
-    		ArrayList<Record> list = data.descripMap.get( r.description[i]);
+    		LinkedList<Record> list = data.descripMap.get( r.description[i]);
     		if(list== null)
     			continue;
     		list.remove(r);
@@ -135,31 +131,31 @@ public class MDS {
 
 	private void addToDescriptionMap(Record r) {
 		for (long l : r.description) {
-			ArrayList<Record> list = data.descripMap.get(l);
+			LinkedList<Record> list = data.descripMap.get(l);
 			if(list == null)
-				list = new ArrayList<Record>();
+				list = new LinkedList<Record>();
 			list.add(r);
 			data.descripMap.put(l, list);
 		}
 	}
 
 	private void addToSSMap(Record r) {
-		ArrayList<Record> list = data.ssMap.get(r.sum);
+		LinkedList<Record> list = data.ssMap.get(r.sum);
 		if(list==null){
-			list = new ArrayList<Record>();
+			list = new LinkedList<>();
 			data.ssMap.put(r.sum, list);
 		}
 		list.add(r);
 	}
 
 	private void removeFromSSMap(Record r) {
-		ArrayList<Record> list = data.ssMap.get(r.sum);
+		LinkedList<Record> list = data.ssMap.get(r.sum);
 		list.remove(r);
 		if(list.size() == 0)
 			data.ssMap.remove(r.sum);
 	}
     
-    private int getSameSameCount(ArrayList<Record> list) {
+    private int getSameSameCount(LinkedList<Record> list) {
 		int count = 0;
 		for (Record record : list) {
 			Arrays.sort(record.description);
