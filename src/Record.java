@@ -1,4 +1,3 @@
-import java.util.LinkedList;
 
 
 public class Record {
@@ -6,14 +5,12 @@ public class Record {
 	double price;
 	long[] description;
 	int size;
-	LinkedList<LinkedList<Record>> referenceList;
 	
 	public Record(long id, double price, long[] description, int size) {
 		this.id = id;
 		this.price = price;
 		updateDescription(description, size);
 		this.size = size;
-		referenceList = new LinkedList<LinkedList<Record>>();
 	}
 
 	public void updateDescription(long[] description, int size) {

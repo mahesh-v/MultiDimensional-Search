@@ -1,5 +1,4 @@
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.NavigableMap;
 import java.util.TreeMap;
@@ -18,10 +17,11 @@ public class MDS {
     int insert(long id, double price, long[] description, int size) {
     	if(data.idMap.containsKey(id)){
     		Record r = data.idMap.get(id);
-    		removeFromOldReferenceLists(r);
+    		removeFromPriceMap(r);
     		r.price = price;
     		addToPriceMap(r);
     		if(size != 0){
+    			removeFromDescriptionMap(r);
     			r.updateDescription(description, size);
     			addToDescriptionMap(r);
     		}
@@ -97,11 +97,12 @@ public class MDS {
     }
     
     private void removeFromOldReferenceLists(Record r) {
-    	LinkedList<Record> priceMapList = data.priceMap.get(r.price);
-    	priceMapList.remove(r);
-    	if(priceMapList.size() == 0)
-    		data.priceMap.remove(r.price);
-    	for (int i = 0; i<r.size;i++) {
+    	removeFromPriceMap(r);
+    	removeFromDescriptionMap(r);
+	}
+
+	private void removeFromDescriptionMap(Record r) {
+		for (int i = 0; i<r.size;i++) {
     		TreeMap<Double, LinkedList<Record>> descPriceMap = data.descripMap.get( r.description[i]);
     		LinkedList<Record> list = descPriceMap.get(r.price);
     		if(list== null)
@@ -112,14 +113,13 @@ public class MDS {
     		if(descPriceMap.entrySet().size() == 0)
     			data.descripMap.remove(r.description[i]);
 		}
-//		LinkedList<LinkedList<Record>> references = r.referenceList;
-//		Iterator<LinkedList<Record>> outer_iter = references.iterator();
-//		while(outer_iter.hasNext()){
-//			LinkedList<Record> reference = outer_iter.next();
-//			if(reference!=null)
-//				reference.remove(r);
-//			outer_iter.remove();
-//		}
+	}
+
+	private void removeFromPriceMap(Record r) {
+		LinkedList<Record> priceMapList = data.priceMap.get(r.price);
+    	priceMapList.remove(r);
+    	if(priceMapList.size() == 0)
+    		data.priceMap.remove(r.price);
 	}
 
 	private void addToDescriptionMap(Record r) {
@@ -134,7 +134,6 @@ public class MDS {
 				list = new LinkedList<Record>();
 			list.add(r);
 			pMap.put(r.price, list);
-			r.referenceList.add(list);
 		}
 	}
 
@@ -145,7 +144,6 @@ public class MDS {
 			data.priceMap.put(r.price, priceList);
 		}
 		priceList.addFirst(r);
-		r.referenceList.add(priceList);
 	}
 
     private long sumOfDescription(long[] description) {
