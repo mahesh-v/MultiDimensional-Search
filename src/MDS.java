@@ -3,7 +3,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.NavigableMap;
-import java.util.TreeMap;
 
 
 
@@ -19,26 +18,22 @@ public class MDS {
     int insert(long id, double price, long[] description, int size) {
     	if(data.idMap.containsKey(id)){
     		Record r = data.idMap.get(id);
-    		removeFromOldReferenceLists(r);
     		r.price = price;
-    		addToPriceMap(r);
     		if(size != 0){
-    			if(r.size>7)
-    				removeFromSSMap(r);
+//    			if(r.size>7)
+//    				removeFromSSMap(r);
+    			removeFromDescriptionMap(r);
     			r.updateDescription(description, size);
-    			if(size>7)
-    				addToSSMap(r);
+    			addToDescriptionMap(r);
+//    			if(size>7)
+//    				addToSSMap(r);
     		}
-    		addToDescriptionMap(r);
     		return 0;
     	}
     	else{
     		Record r = new Record(id, price, description, size);
     		data.idMap.put(id, r);
-    		addToPriceMap(r);
     		addToDescriptionMap(r);
-    		if(size>7)
-    			addToSSMap(r);
     		return 1;
     	}
     }
@@ -53,56 +48,68 @@ public class MDS {
     long delete(long id) {
     	Record r = data.idMap.get(id);
     	if(r!=null){
-    		removeFromOldReferenceLists(r);
+    		removeFromDescriptionMap(r);
     		data.idMap.remove(id);
-    		if(r.size>7)
-    			removeFromSSMap(r);
+//    		if(r.size>7)
+//    			removeFromSSMap(r);
     		return r.sum;
     	}
     	return 0;
     }
 
 	double findMinPrice(long des) {
-		TreeMap<Double, ArrayList<Record>> priceRecordMap = data.descripMap.get(des);
-		if(priceRecordMap == null)
+		ArrayList<Record> descList = data.descripMap.get(des);
+		if(descList == null || descList.size() == 0 )
 			return 0;
-		return priceRecordMap.firstKey();
+		double minPrice=descList.get(0).price;
+		for (Record record : descList) {
+			if(record.price < minPrice)
+				minPrice = record.price;
+		}
+		return minPrice;
     }
 
     double findMaxPrice(long des) {
-		TreeMap<Double, ArrayList<Record>> priceRecordMap = data.descripMap.get(des);
-		if(priceRecordMap == null)
+    	ArrayList<Record> descList = data.descripMap.get(des);
+		if(descList == null || descList.size() == 0 )
 			return 0;
-		return priceRecordMap.lastKey();
+		double maxPrice=descList.get(0).price;
+		for (Record record : descList) {
+			if(record.price > maxPrice)
+				maxPrice = record.price;
+		}
+		return maxPrice;
     }
 
     int findPriceRange(long des, double lowPrice, double highPrice) {
-    	NavigableMap<Double, ArrayList<Record>> map = data.descripMap.get(des).subMap(lowPrice, true, highPrice, true);
+    	ArrayList<Record> descList = data.descripMap.get(des);
     	int count = 0;
-    	for (ArrayList<Record> list : map.values()) {
-			count+=list.size();
+    	for (Record record : descList) {
+			if(record.price<=highPrice && record.price>=lowPrice)
+				count++;
 		}
     	return count;
     }
 
-    double priceHike(long minid, long maxid, double rate) {
+	double priceHike(long minid, long maxid, double rate) {
     	double sum = 0;
     	NavigableMap<Long, Record> map = data.idMap.subMap(minid, true, maxid, true);
     	for (Record r : map.values()) {
-    		removeFromOldReferenceLists(r);
 			double value = r.price + (r.price * (rate/100));
 			value = Math.floor((value+epsilon) * 100) / 100;
 			sum+= (value - r.price);
 			r.price = value;
-			addToPriceMap(r);
-			addToDescriptionMap(r);
 		}
     	return sum;
     }
 
 	int range(double lowPrice, double highPrice) {
-		TreeMap<Double, ArrayList<Record>> priceList = data.priceMap;
-		return priceList.subMap(lowPrice,true,highPrice,true).size();
+		int count=0;
+		for (Record r : data.idMap.values()) {
+			if(r.price<=highPrice && r.price>=lowPrice)
+				count++;
+		}
+		return count;
     }
 
     int samesame() {
@@ -115,54 +122,25 @@ public class MDS {
     	return count;
     }
 
-	private void removeFromOldReferenceLists(Record r) {
-    	removeFromPriceMap(r);
-    	removeFromDescriptionMap(r);
-	}
-
 	private void removeFromDescriptionMap(Record r) {
 		for (int i = 0; i<r.size;i++) {
-    		TreeMap<Double, ArrayList<Record>> descPriceMap = data.descripMap.get( r.description[i]);
-    		ArrayList<Record> list = descPriceMap.get(r.price);
+    		ArrayList<Record> list = data.descripMap.get( r.description[i]);
     		if(list== null)
     			continue;
     		list.remove(r);
     		if(list.size() == 0)
-    			descPriceMap.remove(r.price);
-    		if(descPriceMap.entrySet().size() == 0)
     			data.descripMap.remove(r.description[i]);
 		}
 	}
 
-	private void removeFromPriceMap(Record r) {
-		ArrayList<Record> priceMapList = data.priceMap.get(r.price);
-    	priceMapList.remove(r);
-    	if(priceMapList.size() == 0)
-    		data.priceMap.remove(r.price);
-	}
-
 	private void addToDescriptionMap(Record r) {
 		for (long l : r.description) {
-			TreeMap<Double, ArrayList<Record>> pMap = data.descripMap.get(l);
-			if(pMap == null){
-				pMap = new TreeMap<Double, ArrayList<Record>>();
-				data.descripMap.put(l, pMap);
-			}
-			ArrayList<Record> list = pMap.get(r.price);
+			ArrayList<Record> list = data.descripMap.get(l);
 			if(list == null)
 				list = new ArrayList<Record>();
 			list.add(r);
-			pMap.put(r.price, list);
+			data.descripMap.put(l, list);
 		}
-	}
-
-	private void addToPriceMap(Record r) {
-		ArrayList<Record> priceList = data.priceMap.get(r.price);
-		if(priceList == null) {
-			priceList = new ArrayList<Record>();
-			data.priceMap.put(r.price, priceList);
-		}
-		priceList.add(r);
 	}
 
 	private void addToSSMap(Record r) {

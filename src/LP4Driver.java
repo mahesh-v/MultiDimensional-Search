@@ -79,7 +79,7 @@ public class LP4Driver {
 	}
 	if(in!=null)
 		in.close();
-	System.out.println(rv);
+	System.out.printf("%2f\n",rv);
 	System.out.println(timer.end());
     }
 }
