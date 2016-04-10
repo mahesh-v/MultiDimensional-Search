@@ -123,8 +123,10 @@ public class MDS {
 
 	private void addToPriceMap(Record r) {
 		LinkedList<Record> priceList = data.priceMap.get(r.price);
-		if(priceList == null)
+		if(priceList == null) {
 			priceList = new LinkedList<Record>();
+			data.priceMap.put(r.price, priceList);
+		}
 		priceList.addFirst(r);
 		r.referenceList.add(priceList);
 	}

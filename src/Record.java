@@ -11,7 +11,10 @@ public class Record {
 	public Record(long id, double price, long[] description, int size) {
 		this.id = id;
 		this.price = price;
-		this.description = description;
+		this.description = new long[size];
+		for (int i = 0; i < size; i++) {
+			this.description[i] = description[i];
+		}
 		this.size = size;
 		referenceList = new LinkedList<LinkedList<Record>>();
 	}
