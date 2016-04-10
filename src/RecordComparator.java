@@ -1,10 +1,12 @@
 import java.util.Comparator;
 
 
-public class LongArrayComparator implements Comparator<Long[]> {
+public class RecordComparator implements Comparator<Record> {
 
 	@Override
-	public int compare(Long[] l1, Long[] l2) {
+	public int compare(Record r1, Record r2) {
+		long[] l1 = r1.description;
+		long[] l2 = r2.description;
 		if(l1.length != l2.length)
 			return l1.length - l2.length;
 		for (int i = 0; i < l2.length; i++) {

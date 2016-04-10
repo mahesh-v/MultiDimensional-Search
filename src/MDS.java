@@ -1,5 +1,7 @@
 
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 
@@ -21,7 +23,11 @@ public class MDS {
     		r.price = price;
     		addToPriceMap(r);
     		if(size != 0){
+    			if(r.size>7)
+    				removeFromSSMap(r);
     			r.updateDescription(description, size);
+    			if(size>7)
+    				addToSSMap(r);
     		}
     		addToDescriptionMap(r);
     		return 0;
@@ -31,6 +37,8 @@ public class MDS {
     		data.idMap.put(id, r);
     		addToPriceMap(r);
     		addToDescriptionMap(r);
+    		if(size>7)
+    			addToSSMap(r);
     		return 1;
     	}
     }
@@ -47,25 +55,31 @@ public class MDS {
     	if(r!=null){
     		removeFromOldReferenceLists(r);
     		data.idMap.remove(id);
-    		return sumOfDescription(r.description);
+    		if(r.size>7)
+    			removeFromSSMap(r);
+    		return r.sum;
     	}
     	return 0;
     }
 
 	double findMinPrice(long des) {
-		TreeMap<Double, LinkedList<Record>> priceRecordMap = data.descripMap.get(des);
+		TreeMap<Double, ArrayList<Record>> priceRecordMap = data.descripMap.get(des);
+		if(priceRecordMap == null)
+			return 0;
 		return priceRecordMap.firstKey();
     }
 
     double findMaxPrice(long des) {
-		TreeMap<Double, LinkedList<Record>> priceRecordMap = data.descripMap.get(des);
+		TreeMap<Double, ArrayList<Record>> priceRecordMap = data.descripMap.get(des);
+		if(priceRecordMap == null)
+			return 0;
 		return priceRecordMap.lastKey();
     }
 
     int findPriceRange(long des, double lowPrice, double highPrice) {
-    	NavigableMap<Double, LinkedList<Record>> map = data.descripMap.get(des).subMap(lowPrice, true, highPrice, true);
+    	NavigableMap<Double, ArrayList<Record>> map = data.descripMap.get(des).subMap(lowPrice, true, highPrice, true);
     	int count = 0;
-    	for (LinkedList<Record> list : map.values()) {
+    	for (ArrayList<Record> list : map.values()) {
 			count+=list.size();
 		}
     	return count;
@@ -87,23 +101,29 @@ public class MDS {
     }
 
 	int range(double lowPrice, double highPrice) {
-		TreeMap<Double, LinkedList<Record>> priceList = data.priceMap;
+		TreeMap<Double, ArrayList<Record>> priceList = data.priceMap;
 		return priceList.subMap(lowPrice,true,highPrice,true).size();
     }
 
     int samesame() {
-	return 0;
+    	int count = 0;
+    	for (ArrayList<Record> list : data.ssMap.values()) {
+			if(list.size()>1){
+				count+=getSameSameCount(list);
+			}
+		}
+    	return count;
     }
-    
-    private void removeFromOldReferenceLists(Record r) {
+
+	private void removeFromOldReferenceLists(Record r) {
     	removeFromPriceMap(r);
     	removeFromDescriptionMap(r);
 	}
 
 	private void removeFromDescriptionMap(Record r) {
 		for (int i = 0; i<r.size;i++) {
-    		TreeMap<Double, LinkedList<Record>> descPriceMap = data.descripMap.get( r.description[i]);
-    		LinkedList<Record> list = descPriceMap.get(r.price);
+    		TreeMap<Double, ArrayList<Record>> descPriceMap = data.descripMap.get( r.description[i]);
+    		ArrayList<Record> list = descPriceMap.get(r.price);
     		if(list== null)
     			continue;
     		list.remove(r);
@@ -115,7 +135,7 @@ public class MDS {
 	}
 
 	private void removeFromPriceMap(Record r) {
-		LinkedList<Record> priceMapList = data.priceMap.get(r.price);
+		ArrayList<Record> priceMapList = data.priceMap.get(r.price);
     	priceMapList.remove(r);
     	if(priceMapList.size() == 0)
     		data.priceMap.remove(r.price);
@@ -123,33 +143,79 @@ public class MDS {
 
 	private void addToDescriptionMap(Record r) {
 		for (long l : r.description) {
-			TreeMap<Double, LinkedList<Record>> pMap = data.descripMap.get(l);
+			TreeMap<Double, ArrayList<Record>> pMap = data.descripMap.get(l);
 			if(pMap == null){
-				pMap = new TreeMap<Double, LinkedList<Record>>();
+				pMap = new TreeMap<Double, ArrayList<Record>>();
 				data.descripMap.put(l, pMap);
 			}
-			LinkedList<Record> list = pMap.get(r.price);
+			ArrayList<Record> list = pMap.get(r.price);
 			if(list == null)
-				list = new LinkedList<Record>();
+				list = new ArrayList<Record>();
 			list.add(r);
 			pMap.put(r.price, list);
 		}
 	}
 
 	private void addToPriceMap(Record r) {
-		LinkedList<Record> priceList = data.priceMap.get(r.price);
+		ArrayList<Record> priceList = data.priceMap.get(r.price);
 		if(priceList == null) {
-			priceList = new LinkedList<Record>();
+			priceList = new ArrayList<Record>();
 			data.priceMap.put(r.price, priceList);
 		}
-		priceList.addFirst(r);
+		priceList.add(r);
 	}
 
-    private long sumOfDescription(long[] description) {
-		long sum=0;
-		for (long l : description) {
-			sum+=l;
+	private void addToSSMap(Record r) {
+		ArrayList<Record> list = data.ssMap.get(r.sum);
+		if(list==null){
+			list = new ArrayList<Record>();
+			data.ssMap.put(r.sum, list);
 		}
-		return sum;
+		list.add(r);
+	}
+
+	private void removeFromSSMap(Record r) {
+		ArrayList<Record> list = data.ssMap.get(r.sum);
+		list.remove(r);
+		if(list.size() == 0)
+			data.ssMap.remove(r.sum);
+	}
+    
+    private int getSameSameCount(ArrayList<Record> list) {
+		int count = 0;
+		for (Record record : list) {
+			Arrays.sort(record.description);
+		}
+		boolean flag=true;
+		Collections.sort(list, new RecordComparator());
+		for (int i = 1; i < list.size(); i++) {
+			if(isSortedRecordsEqual(list.get(i-1), list.get(i))){
+				if(flag){
+					count+=2;
+					flag=false;
+				}
+				else
+					count++;
+			}
+			else{
+				flag=true;
+			}
+		}
+//		if(count>0)
+//			return count+1;
+		return count;
+	}
+
+	private boolean isSortedRecordsEqual(Record r1, Record r2) {
+		long[] l1 = r1.description;
+		long[] l2 = r2.description;
+		if(l1.length != l2.length)
+			return false;
+		for (int i = 0; i < l2.length; i++) {
+			if(l1[i] == l2[i])
+				continue;
+			return false;
+		}
+		return true;
 	}
 }
