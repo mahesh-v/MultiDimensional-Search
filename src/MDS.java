@@ -77,15 +77,18 @@ public class MDS {
     	double sum = 0;
     	NavigableMap<Long, Record> map = data.idMap.subMap(minid, true, maxid, true);
     	for (Record r : map.values()) {
+    		removeFromOldReferenceLists(r);
 			double value = r.price + (r.price * (rate/100));
 			value = Math.floor((value+epsilon) * 100) / 100;
 			sum+= (value - r.price);
 			r.price = value;
+			addToPriceMap(r);
+			addToDescriptionMap(r);
 		}
     	return sum;
     }
 
-    int range(double lowPrice, double highPrice) {
+	int range(double lowPrice, double highPrice) {
 		TreeMap<Double, LinkedList<Record>> priceList = data.priceMap;
 		return priceList.subMap(lowPrice,true,highPrice,true).size();
     }
