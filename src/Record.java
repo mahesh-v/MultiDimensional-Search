@@ -1,6 +1,13 @@
 
 
 
+/**
+ * Record object to store every individual record containing 
+ * long id, double price and long[] description
+ * 
+ * @author Darshan Narayana Reddy and Mahesh Venkateswaran
+ *
+ */
 public class Record {
 	long id;
 	double price;

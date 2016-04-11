@@ -2,6 +2,12 @@ import java.util.LinkedList;
 import java.util.TreeMap;
 
 
+/**
+ * Class the store the indexes that are used in MDS
+ * 
+ * @author Darshan Narayana Reddy and Mahesh Venkateswaran
+ *
+ */
 public class MyData {
 	
 	TreeMap<Long, Record> idMap;

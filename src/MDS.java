@@ -1,7 +1,15 @@
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.NavigableMap;
+import java.util.TreeMap;
 
-import java.util.*;
-
-
+/**
+ * MultiDimensional Search class to handle multiple operations 
+ * on records that are stored and indexed
+ * 
+ * @author Darshan Narayana Reddy and Mahesh Venkateswaran
+ *
+ */
 public class MDS {
 	
 	MyData data;
@@ -11,6 +19,14 @@ public class MDS {
 		data = new MyData();
 	}
 	
+    /**
+     * Insert a new record, or update record if id exists
+     * @param id
+     * @param price
+     * @param description
+     * @param size
+     * @return 0 if record already exists, else 1.
+     */
     int insert(long id, double price, long[] description, int size) {
     	if(data.idMap.containsKey(id)){
     		Record r = data.idMap.get(id);
@@ -30,6 +46,11 @@ public class MDS {
     	}
     }
 
+	/**
+	 * Locate the item with given id and return its price
+	 * @param id
+	 * @return Price of item with given id
+	 */
 	double find(long id) {
     	Record r = data.idMap.get(id);
     	if(r!=null)
@@ -37,6 +58,12 @@ public class MDS {
     	return 0;
     }
 
+    /**
+     * Deletes the record with the specified id
+     * 
+     * @param id
+     * @return Sum of item's description items
+     */
     long delete(long id) {
     	Record r = data.idMap.get(id);
     	if(r!=null){
@@ -47,6 +74,12 @@ public class MDS {
     	return 0;
     }
 
+	/**
+	 * Finds the item with minimum price, 
+	 * which contains des as a part of its description
+	 * @param des
+	 * @return The price of that item
+	 */
 	double findMinPrice(long des) {
 		LinkedList<Record> descList = data.descripMap.get(des);
 		if(descList == null || descList.size() == 0 )
@@ -59,6 +92,12 @@ public class MDS {
 		return minPrice;
     }
 
+	/**
+	 * Finds the item with maximum price, 
+	 * which contains des as a part of its description
+	 * @param des
+	 * @return The price of that item
+	 */
     double findMaxPrice(long des) {
     	LinkedList<Record> descList = data.descripMap.get(des);
 		if(descList == null || descList.size() == 0 )
@@ -71,6 +110,14 @@ public class MDS {
 		return maxPrice;
     }
 
+    /**
+	 * Finds the items with price in the given price range (inclusive), 
+	 * and contains des as a part of its description
+	 * @param des
+	 * @param lowPrice
+	 * @param highPrice
+	 * @return Number of items which satisfy above criteria
+	 */
     int findPriceRange(long des, double lowPrice, double highPrice) {
     	LinkedList<Record> descList = data.descripMap.get(des);
     	int count = 0;
@@ -81,6 +128,14 @@ public class MDS {
     	return count;
     }
 
+	/**
+	 * Increases the price of items in the range of minid to max id by rate%
+	 * 
+	 * @param minid
+	 * @param maxid
+	 * @param rate
+	 * @return Total increase in price of all items
+	 */
 	double priceHike(long minid, long maxid, double rate) {
     	double sum = 0;
     	NavigableMap<Long, Record> map = data.idMap.subMap(minid, true, maxid, true);
@@ -93,6 +148,13 @@ public class MDS {
     	return sum;
     }
 
+	/**
+	 * Finds items in the given price range 
+	 * and returns the number of such items
+	 * @param lowPrice
+	 * @param highPrice
+	 * @return Count of items in price range
+	 */
 	int range(double lowPrice, double highPrice) {
 		int count=0;
 		for (Record r : data.idMap.values()) {
@@ -102,10 +164,15 @@ public class MDS {
 		return count;
     }
 
+    /**
+     * Finds the number of records with identical items in their description
+     * 
+     * @return Count of identical records
+     */
     int samesame() {
     	TreeMap<Record, Integer> ssMap = new TreeMap<Record, Integer>(new RecordComparator());
     	for (Record r : data.idMap.values()) {
-			addToSSMap(r, ssMap);
+			addToSameSameMap(r, ssMap);
 		}
     	int count = 0;
     	for (Integer c : ssMap.values()) {
@@ -115,6 +182,7 @@ public class MDS {
     	return count;
     }
 
+    //helper method to remove a record from the description map at all description entries
 	private void removeFromDescriptionMap(Record r) {
 		for (int i = 0; i<r.size;i++) {
     		LinkedList<Record> list = data.descripMap.get( r.description[i]);
@@ -126,6 +194,7 @@ public class MDS {
 		}
 	}
 
+	//helper method to add a record to the description map at all description entries
 	private void addToDescriptionMap(Record r) {
 		for (long l : r.description) {
 			LinkedList<Record> list = data.descripMap.get(l);
@@ -136,7 +205,8 @@ public class MDS {
 		}
 	}
 
-	private void addToSSMap(Record r, TreeMap<Record, Integer> ssMap) {
+	//adds the items to the same same map after sorting its description
+	private void addToSameSameMap(Record r, TreeMap<Record, Integer> ssMap) {
 		if(r.size<8)
 			return;
 		Arrays.sort(r.description);

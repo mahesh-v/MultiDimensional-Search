@@ -1,8 +1,15 @@
 import java.util.Comparator;
 
 
+/**
+ * Comparator used to compare equivalence of sorted descriptions
+ * 
+ * @author Darshan Narayana Reddy and Mahesh Venkateswaran
+ *
+ */
 public class RecordComparator implements Comparator<Record> {
 
+	//Assumption, descriptions are sorted
 	@Override
 	public int compare(Record r1, Record r2) {
 		long[] l1 = r1.description;
