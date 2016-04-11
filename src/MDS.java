@@ -108,10 +108,9 @@ public class MDS {
 
     int samesame() {
     	int count = 0;
-    	for (LinkedList<Record> list : data.ssMap.values()) {
-			if(list.size()>1){
-				count+=getSameSameCount(list);
-			}
+    	for (Integer c : data.ssMap.values()) {
+    		if(c>1)
+    			count+=c;
 		}
     	return count;
     }
@@ -140,56 +139,20 @@ public class MDS {
 	private void addToSSMap(Record r) {
 		if(r.size<8)
 			return;
-		LinkedList<Record> list = data.ssMap.get(r.sum);
-		if(list==null){
-			list = new LinkedList<>();
-			data.ssMap.put(r.sum, list);
-		}
-		list.add(r);
+		Integer oc = data.ssMap.get(r);
+		if(oc==null)
+			data.ssMap.put(r, 1);
+		else
+			data.ssMap.put(r, oc+1);
 	}
 
 	private void removeFromSSMap(Record r) {
 		if(r.size<8)
 			return;
-		LinkedList<Record> list = data.ssMap.get(r.sum);
-		list.remove(r);
-		if(list.size() == 0)
-			data.ssMap.remove(r.sum);
-	}
-    
-    private int getSameSameCount(LinkedList<Record> list) {
-		int count = 0;
-		for (Record record : list) {
-			Arrays.sort(record.description);
-		}
-		boolean flag=true;
-		Collections.sort(list, new RecordComparator());
-		for (int i = 1; i < list.size(); i++) {
-			if(isSortedRecordsEqual(list.get(i-1), list.get(i))){
-				if(flag){
-					count+=2;
-					flag=false;
-				}
-				else
-					count++;
-			}
-			else{
-				flag=true;
-			}
-		}
-		return count;
-	}
-
-	private boolean isSortedRecordsEqual(Record r1, Record r2) {
-		long[] l1 = r1.description;
-		long[] l2 = r2.description;
-		if(l1.length != l2.length)
-			return false;
-		for (int i = 0; i < l2.length; i++) {
-			if(l1[i] == l2[i])
-				continue;
-			return false;
-		}
-		return true;
+		Integer oc = data.ssMap.get(r);
+		if(oc==1)
+			data.ssMap.remove(r);
+		else
+			data.ssMap.put(r, oc-1);
 	}
 }
