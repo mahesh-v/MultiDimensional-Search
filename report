@@ -1,0 +1,80 @@
+Analysis:
+CURRENT IMPLEMENTATION(This produced the Best times for all the inputs given)
+
+We are Using TreeMap as our primary data Structure.
+We are using 2 TreeMap's
+-First one is id to Record mapping for faster find, delete and insert(if its already there)
+-Second one is to map each description to all the Records it is part of.(its useful for rest of the operations)
+
+ALTERNATE IMPLEMENTATIONS(we tried quite a few methods which didn't yield efficient times for given inputs)
+
+In addition to the TreeMap of id to Record. WE had 2 other TreeMaps
+-TreeMap of description element to a TreeMap of price to list of Records with that price(we implemented this so that all the price operations are fast.)
+-TreeMap of Price to list of records with all Records of that Price.
+Although the above mentioned way seems good theoratically may be for given inputs(which contain more insert and delete and very few other operations this was not that efficient )
+This produced a running time of almost 13 Seconds for lp4-5-ck.txt which is 10 seconds more than the current implementaion.
+
+IMPORTANT OBSERVATION
+We initially used ArrayList for Record List which took forever for lp4-bad.txt and switching to LinkedList gave the output in just ~20 seconds.
+
+
+===========================================
+For lp4-1.txt
+===========================================
+1450.080000
+Time: 25 msec.
+Memory: 4 MB / 128 MB.
+
+===========================================
+For lp4-2.txt
+===========================================
+4146.320000
+Time: 21 msec.
+Memory: 4 MB / 128 MB.
+
+===========================================
+For lp4-3-1k.txt
+===========================================
+52252.360000
+Time: 96 msec.
+Memory: 8 MB / 128 MB.
+
+===========================================
+For lp4-4-5k.txt
+===========================================
+490409.010000
+Time: 202 msec.
+Memory: 25 MB / 128 MB.
+
+===========================================
+For lp4-5-ck.txt
+===========================================
+173819092858.239200
+Time: 2122 msec.
+Memory: 70 MB / 231 MB.
+
+===========================================
+For lp4-bad.txt
+===========================================
+1016105100.000000
+Time: 31356 msec.
+Memory: 680 MB / 954 MB.
+
+===========================================
+For lp4-same.txt
+===========================================
+22.000000
+Time: 31 msec.
+Memory: 4 MB / 128 MB.
+
+===========================================
+For lp4-same2.txt
+===========================================
+45.000000
+Time: 32 msec.
+Memory: 4 MB / 128 MB.
+
+===========================================
+
+
+
