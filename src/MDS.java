@@ -16,11 +16,9 @@ public class MDS {
     		Record r = data.idMap.get(id);
     		r.price = price;
     		if(size != 0){
-    			removeFromSSMap(r);
     			removeFromDescriptionMap(r);
     			r.updateDescription(description, size);
     			addToDescriptionMap(r);
-    			addToSSMap(r);
     		}
     		return 0;
     	}
@@ -28,7 +26,6 @@ public class MDS {
     		Record r = new Record(id, price, description, size);
     		data.idMap.put(id, r);
     		addToDescriptionMap(r);
-    		addToSSMap(r);
     		return 1;
     	}
     }
@@ -45,7 +42,6 @@ public class MDS {
     	if(r!=null){
     		removeFromDescriptionMap(r);
     		data.idMap.remove(id);
-    		removeFromSSMap(r);
     		return r.sum;
     	}
     	return 0;
@@ -107,8 +103,12 @@ public class MDS {
     }
 
     int samesame() {
+    	TreeMap<Record, Integer> ssMap = new TreeMap<Record, Integer>(new RecordComparator());
+    	for (Record r : data.idMap.values()) {
+			addToSSMap(r, ssMap);
+		}
     	int count = 0;
-    	for (Integer c : data.ssMap.values()) {
+    	for (Integer c : ssMap.values()) {
     		if(c>1)
     			count+=c;
 		}
@@ -136,23 +136,14 @@ public class MDS {
 		}
 	}
 
-	private void addToSSMap(Record r) {
+	private void addToSSMap(Record r, TreeMap<Record, Integer> ssMap) {
 		if(r.size<8)
 			return;
-		Integer oc = data.ssMap.get(r);
+		Arrays.sort(r.description);
+		Integer oc = ssMap.get(r);
 		if(oc==null)
-			data.ssMap.put(r, 1);
+			ssMap.put(r, 1);
 		else
-			data.ssMap.put(r, oc+1);
-	}
-
-	private void removeFromSSMap(Record r) {
-		if(r.size<8)
-			return;
-		Integer oc = data.ssMap.get(r);
-		if(oc==1)
-			data.ssMap.remove(r);
-		else
-			data.ssMap.put(r, oc-1);
+			ssMap.put(r, oc+1);
 	}
 }

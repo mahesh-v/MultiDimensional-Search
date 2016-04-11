@@ -9,6 +9,8 @@ public class RecordComparator implements Comparator<Record> {
 		long[] l2 = r2.description;
 		if(l1.length != l2.length)
 			return l1.length - l2.length;
+		if(r1.sum!=r2.sum)
+			return (int) (r1.sum-r2.sum);
 		for (int i = 0; i < l2.length; i++) {
 			if(l1[i] == l2[i])
 				continue;
