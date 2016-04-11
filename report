@@ -15,7 +15,8 @@ Although the above mentioned way seems good theoratically may be for given input
 This produced a running time of almost 13 Seconds for lp4-5-ck.txt which is 10 seconds more than the current implementaion.
 
 IMPORTANT OBSERVATION
-We initially used ArrayList for Record List which took forever for lp4-bad.txt and switching to LinkedList gave the output in just ~20 seconds.
+-We initially used ArrayList for Record List which took forever for lp4-bad.txt and switching to LinkedList gave the output in just ~20 seconds.
+-Using Nested TreeMap proved inefficient compared to Using TreeMap and doing Linear Search for the Price of Records, this is because of additional cost of indexing on more frequent operation such as insert, delete and find.
 
 
 ===========================================
