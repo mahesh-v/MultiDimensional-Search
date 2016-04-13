@@ -120,6 +120,8 @@ public class MDS {
 	 */
     int findPriceRange(long des, double lowPrice, double highPrice) {
     	LinkedList<Record> descList = data.descripMap.get(des);
+    	if(descList == null)
+    		return 0;
     	int count = 0;
     	for (Record record : descList) {
 			if(record.price<=highPrice && record.price>=lowPrice)
@@ -137,8 +139,10 @@ public class MDS {
 	 * @return Total increase in price of all items
 	 */
 	double priceHike(long minid, long maxid, double rate) {
-    	double sum = 0;
     	NavigableMap<Long, Record> map = data.idMap.subMap(minid, true, maxid, true);
+    	if(map == null || map.size() == 0)
+    		return 0;
+    	double sum = 0;
     	for (Record r : map.values()) {
 			double value = r.price + (r.price * (rate/100));
 			value = Math.floor((value+epsilon) * 100) / 100;
